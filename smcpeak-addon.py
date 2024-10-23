@@ -14,13 +14,14 @@ import os
 def get_calibri_font():
     """Return the "Calibri Bold" font, loading it if needed."""
 
-    font = bpy.data.fonts.get('Calibri Bold', None)
-    if font:
-        return font
-    else:
-        # TODO: Load the font in this case.
-        print("Font is not loaded, skipping setting it.")
-        return None
+    font_name = 'Calibri Bold'
+
+    # Load it if necessary.
+    if not font_name in bpy.data.fonts:
+        print(f"Loading font: {font_name}.")
+        bpy.ops.font.open(filepath="C:\\WINDOWS\\Fonts\\calibrib.ttf")
+
+    return bpy.data.fonts[font_name]
 
 
 def add_text_strip(context, duration):
