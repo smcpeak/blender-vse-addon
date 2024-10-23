@@ -145,10 +145,16 @@ def ripple_delete(context):
     """Delete the currently selected strips, then move everything that
     is after them left by their width."""
 
-    # Assume all selected strips have the active strip's start and
-    # duration.
-    start = context.active_sequence_strip.frame_final_start
-    duration = context.active_sequence_strip.frame_final_duration
+    # The active strip might not be among the selected strips, so focus
+    # on what is selected.
+    if len(context.selected_sequences) == 0:
+        raise RuntimeError("No selected strips.")
+
+    first_sel = context.selected_sequences[0]
+
+    # Assume all selected strips have the same start and duration.
+    start = first_sel.frame_final_start
+    duration = first_sel.frame_final_duration
 
     # Delete selected strips.
     bpy.ops.sequencer.delete()
@@ -164,9 +170,6 @@ def ripple_delete(context):
     bpy.ops.transform.seq_slide(
         value=(-duration, 0),
         snap=False)
-
-
-
 
 
 # ----------------------------- operators ------------------------------
