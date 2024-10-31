@@ -73,10 +73,12 @@ def render_frame(context):
     return new_filepath
 
 
-def add_parry_timer_inset(context):
+def add_parry_timer_inset(context, n):
     """Assuming that the current frame shows a parry attempt on the
     deciding frame, freeze the portion showing the parry timer and
-    persistently show it for 4 seconds."""
+    persistently show it for 4 seconds.  `n` is the position of this
+    timer freeze-frame, where 0 is the first.  It is needed when we
+    want to show more than one onscreen at once."""
 
     # Save the current frame to a file.
     new_filepath = render_frame(context)
@@ -105,7 +107,7 @@ def add_parry_timer_inset(context):
     img.crop.max_y = 28
 
     # Move it down to below the main gamepad viewer area.
-    img.transform.offset_y = -150
+    img.transform.offset_y = -(150 + 50*n)
 
     # Add the text label.
     label = add_text_strip(context, 120)
@@ -113,8 +115,8 @@ def add_parry_timer_inset(context):
     # Adjust its details.
     label.font_size = 20
     label.align_x = 'RIGHT'
-    label.location[0] = 0.9    # x
-    label.location[1] = 0.74   # y
+    label.location[0] = 0.9            # x
+    label.location[1] = 0.74 - 0.07*n  # y
 
     font = get_calibri_font()
     if font:
@@ -172,6 +174,20 @@ def ripple_delete(context):
         snap=False)
 
 
+def print_text_strips(context):
+    """Print to the system console the text of every selected text,
+    ordered by start frame strip."""
+
+    strips = context.selected_editable_sequences
+    strips = sorted(strips, key=lambda strip: strip.frame_final_start)
+    count = len(strips)
+
+    print(f"---- {count} text strips ----")
+    for strip in strips:
+        if strip.type == 'TEXT':
+            print(strip.text)
+
+
 # ----------------------------- operators ------------------------------
 class RenderFrameOperator(bpy.types.Operator):
     """Render the current frame to a file."""
@@ -183,13 +199,23 @@ class RenderFrameOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class AddParryTimerInsetOperator(bpy.types.Operator):
-    """Add a parry timer inset based on the current frame."""
-    bl_idname = "smcpeak.add_parry_timer_inset"
-    bl_label = "Add Parry Timer Inset Operator"
+class AddParryTimerInset0Operator(bpy.types.Operator):
+    """Add a parry timer inset based on the current frame in slot 0."""
+    bl_idname = "smcpeak.add_parry_timer_inset0"
+    bl_label = "Add Parry Timer Inset Slot 0 Operator"
 
     def execute(self, context):
-        add_parry_timer_inset(context)
+        add_parry_timer_inset(context, 0)
+        return {'FINISHED'}
+
+
+class AddParryTimerInset1Operator(bpy.types.Operator):
+    """Add a parry timer inset based on the current frame in slot 1."""
+    bl_idname = "smcpeak.add_parry_timer_inset1"
+    bl_label = "Add Parry Timer Inset Slot 1 Operator"
+
+    def execute(self, context):
+        add_parry_timer_inset(context, 1)
         return {'FINISHED'}
 
 
@@ -215,19 +241,33 @@ class RippleDeleteOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class PrintTextStripsOperator(bpy.types.Operator):
+    """Print all selected text strips' text to the system console."""
+    bl_idname = "smcpeak.print_text_strips"
+    bl_label = "Print text strips to the console"
+
+    def execute(self, context):
+        print_text_strips(context)
+        return {'FINISHED'}
+
+
 # ---------------------------- registration ----------------------------
 def register():
     bpy.utils.register_class(RenderFrameOperator)
-    bpy.utils.register_class(AddParryTimerInsetOperator)
+    bpy.utils.register_class(AddParryTimerInset0Operator)
+    bpy.utils.register_class(AddParryTimerInset1Operator)
     bpy.utils.register_class(AddAttemptNumberOperator)
     bpy.utils.register_class(RippleDeleteOperator)
+    bpy.utils.register_class(PrintTextStripsOperator)
 
 
 def unregister():
     bpy.utils.unregister_class(RenderFrameOperator)
-    bpy.utils.unregister_class(AddParryTimerInsetOperator)
+    bpy.utils.unregister_class(AddParryTimerInset0Operator)
+    bpy.utils.unregister_class(AddParryTimerInset1Operator)
     bpy.utils.unregister_class(AddAttemptNumberOperator)
     bpy.utils.unregister_class(RippleDeleteOperator)
+    bpy.utils.unregister_class(PrintTextStripsOperator)
 
 
 if __name__ == "__main__":
