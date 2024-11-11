@@ -33,7 +33,9 @@ def add_text_strip(context, duration):
         type='TEXT',
         frame_start=frame_num,
         frame_end=frame_num+duration)
-    return context.active_sequence_strip
+    strip = context.active_sequence_strip
+    strip.use_shadow = True
+    return strip
 
 
 def render_frame(context):
