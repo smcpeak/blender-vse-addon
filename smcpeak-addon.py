@@ -190,6 +190,20 @@ def print_text_strips(context):
             print(strip.text)
 
 
+def add_commentary_text(context):
+    """Add a text box in my usual position for commentary."""
+
+    # Make a text strip from now to the end.
+    label = add_text_strip(context, 120)
+    label.font_size = 40
+    label.location[0] = 0.50   # x
+    label.location[1] = 0.15   # y
+
+    font = get_calibri_font()
+    if font:
+        label.font = font
+
+
 # ----------------------------- operators ------------------------------
 class RenderFrameOperator(bpy.types.Operator):
     """Render the current frame to a file."""
@@ -253,6 +267,16 @@ class PrintTextStripsOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class AddCommentaryTextOperator(bpy.types.Operator):
+    """Add a strip of commentary text."""
+    bl_idname = "smcpeak.add_commentary_text"
+    bl_label = "Add a strip of commentary text"
+
+    def execute(self, context):
+        add_commentary_text(context)
+        return {'FINISHED'}
+
+
 # ---------------------------- registration ----------------------------
 def register():
     bpy.utils.register_class(RenderFrameOperator)
@@ -261,6 +285,7 @@ def register():
     bpy.utils.register_class(AddAttemptNumberOperator)
     bpy.utils.register_class(RippleDeleteOperator)
     bpy.utils.register_class(PrintTextStripsOperator)
+    bpy.utils.register_class(AddCommentaryTextOperator)
 
 
 def unregister():
@@ -270,6 +295,7 @@ def unregister():
     bpy.utils.unregister_class(AddAttemptNumberOperator)
     bpy.utils.unregister_class(RippleDeleteOperator)
     bpy.utils.unregister_class(PrintTextStripsOperator)
+    bpy.utils.unregister_class(AddCommentaryTextOperator)
 
 
 if __name__ == "__main__":
