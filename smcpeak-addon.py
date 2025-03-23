@@ -245,6 +245,16 @@ class AddParryTimerInset2Operator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class AddParryTimerInset3Operator(bpy.types.Operator):
+    """Add a parry timer inset based on the current frame in slot 3."""
+    bl_idname = "smcpeak.add_parry_timer_inset3"
+    bl_label = "Add Parry Timer Inset Slot 3 Operator"
+
+    def execute(self, context):
+        add_parry_timer_inset(context, 3)
+        return {'FINISHED'}
+
+
 class AddAttemptNumberOperator(bpy.types.Operator):
     """Add a text box showing the current attempt number."""
     bl_idname = "smcpeak.add_attempt_number"
@@ -293,6 +303,7 @@ def register():
     bpy.utils.register_class(AddParryTimerInset0Operator)
     bpy.utils.register_class(AddParryTimerInset1Operator)
     bpy.utils.register_class(AddParryTimerInset2Operator)
+    bpy.utils.register_class(AddParryTimerInset3Operator)
     bpy.utils.register_class(AddAttemptNumberOperator)
     bpy.utils.register_class(RippleDeleteOperator)
     bpy.utils.register_class(PrintTextStripsOperator)
@@ -304,6 +315,7 @@ def unregister():
     bpy.utils.unregister_class(AddParryTimerInset0Operator)
     bpy.utils.unregister_class(AddParryTimerInset1Operator)
     bpy.utils.unregister_class(AddParryTimerInset2Operator)
+    bpy.utils.unregister_class(AddParryTimerInset3Operator)
     bpy.utils.unregister_class(AddAttemptNumberOperator)
     bpy.utils.unregister_class(RippleDeleteOperator)
     bpy.utils.unregister_class(PrintTextStripsOperator)
